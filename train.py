@@ -1,6 +1,7 @@
 class Train(object):
 
-    def __init__(self, name, capacity, cargo, speed, status, location, distance_traveled):
+    def __init__(self, owner, name, capacity, cargo, speed, status, location, distance_traveled):
+        self.owner = owner
         self.name = name
         self.capacity = capacity
         self.cargo = cargo

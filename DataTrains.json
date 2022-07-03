@@ -1,0 +1,72 @@
+[
+  {
+    "owner": "raduzniy",
+    "name": "raduzniy_train_big_1",
+    "capacity": 6000,
+    "cargo": 0,
+    "speed": 35,
+    "status": "wait",
+    "location": "terminal_raduzniy",
+    "distance_traveled": 0
+  },
+  {
+    "owner": "raduzniy",
+    "name": "raduzniy_train_big_2",
+    "capacity": 6000,
+    "cargo": 0,
+    "speed": 35,
+    "status": "wait",
+    "location": "terminal_raduzniy",
+    "distance_traveled": 0
+  },
+  {
+    "owner": "raduzniy",
+    "name": "raduzniy_train_little_3",
+    "capacity": 4000,
+    "cargo": 4000,
+    "speed": 40,
+    "status": "transit_in_entrepot",
+    "location": "in_transit",
+    "distance_traveled": 1750
+  },
+  {
+    "owner": "raduzniy",
+    "name": "raduzniy_train_little_4",
+    "capacity": 4000,
+    "cargo": 0,
+    "speed": 40,
+    "status": "transit_in_terminal",
+    "location": "in_transit",
+    "distance_traveled": 0
+  },
+  {
+    "owner": "raduzniy",
+    "name": "raduzniy_train_little_5",
+    "capacity": 4000,
+    "cargo": 4000,
+    "speed": 40,
+    "status": "wait",
+    "location": "entrepot_polarniy",
+    "distance_traveled": 0
+  },
+  {
+    "owner": "zvezda",
+    "name": "zvezda_train_1",
+    "capacity": 5000,
+    "cargo": 0,
+    "speed": 45,
+    "status": "wait",
+    "location": "terminal_zvezda",
+    "distance_traveled": 0
+  },
+  {
+    "owner": "zvezda",
+    "name": "zvezda_train_2",
+    "capacity": 5000,
+    "cargo": 0,
+    "speed": 45,
+    "status": "wait",
+    "location": "terminal_zvezda",
+    "distance_traveled": 0
+  }
+]
