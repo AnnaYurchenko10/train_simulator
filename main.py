@@ -1,6 +1,8 @@
 import datetime
 import json
 from arrow import Arrow
+
+import db_helper
 from entrepot import Entrepot
 from location_status import Location_Status
 from terminal import Terminal
@@ -39,6 +41,7 @@ def init():
     zvezda_trains = [train for train in trains if train.owner == 'zvezda']
 
 init()
+db_helper.init()
 
 for i in Arrow.range('hours', start_time, end_time):
     # добыча
@@ -57,12 +60,7 @@ for i in Arrow.range('hours', start_time, end_time):
             raduzniy.is_free = False
     # погрузка нефти
     Terminal.loading(raduzniy_train, 200, raduzniy)
-
-    # if (raduzniy_train.cargo == raduzniy_train.capacity) and (raduzniy_train.distance_traveled != 0) or (raduzniy_train.status == Train_Status.WAIT.value):
-    #     print("{}, {}, {}, {}, {}".format(i, raduzniy.oil, raduzniy.production, None, None))
-    # else:
-    #     print("{}, {}, {}, {}, {}, {}, {}".format(i, raduzniy.oil, raduzniy.production, raduzniy_train.name, raduzniy_train.cargo, raduzniy_train.status, raduzniy_train.distance_traveled))
-
+    db_helper.insert_raduzniy_record(i.strftime('%Y-%m-%d %H:%M:%S'),raduzniy.oil, raduzniy.production, raduzniy_train.name, 200)
     # добыча
     Terminal.production(zvezda, 50, 2)
     # очередь из поездов
@@ -79,20 +77,20 @@ for i in Arrow.range('hours', start_time, end_time):
             zvezda.is_free = False
     # погрузка нефти
     Terminal.loading(zvezda_train, 250, zvezda)
+    # вывод расписания в базу данных
+    db_helper.insert_zvezda_record(i.strftime('%Y-%m-%d %H:%M:%S'),zvezda.oil, zvezda.production, zvezda_train.name, 200)
 
-    # if (zvezda_train.cargo == zvezda_train.capacity) and (zvezda_train.distance_traveled != 0) or (zvezda_train.status == Train_Status.WAIT.value):
-    #    print("{}, {}, {}, {}, {}".format(i, zvezda.oil, zvezda.production, None, None))
-    # else:
-    #    print("{}, {}, {}, {}, {}, {}, {}".format(i, zvezda.oil, zvezda.production, zvezda_train.name, zvezda_train.cargo, zvezda_train.status, zvezda_train.distance_traveled))
-
-# for train in trains:
-#     print("{}, {}, {}, {}".format(train.name, train.status, train.location, train.distance_traveled))
-
-
+    # очередь из поездов
     queue_polarniy_trains = []
     Entrepot.unloading_queue_trains(queue_polarniy_trains, trains)
     Entrepot.update_places(queue_polarniy_trains, polarniy)
-    print("{}, {}, {}".format(i, polarniy.oil, Train.getNames(polarniy.trains)))
+
+    db_helper.insert_polarniy_record(
+        i.strftime('%Y-%m-%d %H:%M:%S'), polarniy.oil,
+        Train.getName(polarniy.trains, 0), Train.getCargo(polarniy.trains, 0),
+        Train.getName(polarniy.trains, 1), Train.getCargo(polarniy.trains, 1),
+        Train.getName(polarniy.trains, 2), Train.getCargo(polarniy.trains, 2)
+    )
     Entrepot.loading_unloading_process(polarniy)
 
     train_loading = Entrepot.loading_place(polarniy)

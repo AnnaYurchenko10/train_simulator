@@ -39,7 +39,8 @@ class Train(object):
                     names = names + 'None '
             return names
 
+    def getName(trains, number):
+        return trains[number].name if trains[number] is not None else None
 
-
-
-
+    def getCargo(trains, number):
+        return trains[number].cargo if trains[number] is not None else 0
