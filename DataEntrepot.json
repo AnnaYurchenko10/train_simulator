@@ -1,0 +1,6 @@
+{
+    "oil": 0,
+    "loading": 300,
+    "unloading": 200,
+    "max_capacity": 15000
+}
