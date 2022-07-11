@@ -23,14 +23,14 @@ def init():
         oil int not null,
         production int not null,
         train varchar(100),
-        loading int
+        cargo int
     );
     CREATE TABLE IF NOT EXISTS zvezda(
         date_and_time timestamp not null primary key,
         oil int not null,
         production int not null,
         train varchar(100),
-        loading int
+        cargo int
     );
     CREATE TABLE IF NOT EXISTS polarniy(
         date_and_time timestamp not null primary key,
@@ -48,16 +48,16 @@ def init():
 
     connection.commit()
 
-def insert_raduzniy_record(date_and_time, oil, production, train, loading):
+def insert_raduzniy_record(date_and_time, oil, production, train, cargo):
     cursor.execute('''
-        INSERT INTO raduzniy (date_and_time, oil, production, train, loading) values
-        ('{}', {}, {}, '{}', {})'''.format(date_and_time, oil, production, train, loading))
+        INSERT INTO raduzniy (date_and_time, oil, production, train, cargo) values
+        ('{}', {}, {}, '{}', {})'''.format(date_and_time, oil, production, train, cargo))
     connection.commit()
 
-def insert_zvezda_record(date_and_time, oil, production, train, loading):
+def insert_zvezda_record(date_and_time, oil, production, train, cargo):
     cursor.execute('''
-        INSERT INTO zvezda (date_and_time, oil, production, train, loading) values
-        ('{}', {}, {}, '{}', {})'''.format(date_and_time, oil, production, train, loading))
+        INSERT INTO zvezda (date_and_time, oil, production, train, cargo) values
+        ('{}', {}, {}, '{}', {})'''.format(date_and_time, oil, production, train, cargo))
     connection.commit()
 
 def insert_polarniy_record(date_and_time, oil, train_1, cargo_1, train_2, cargo_2, train_3, cargo_3):

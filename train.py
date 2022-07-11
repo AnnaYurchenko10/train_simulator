@@ -29,17 +29,10 @@ class Train(object):
                 train.location = terminal_name
                 train.distance_traveled = 0
 
-    def getNames(trains):
-        if len(trains) > 0:
-            names = ''
-            for train in trains:
-                if train is not None:
-                    names = names + train.name + ' ' + str(train.cargo) +'  '
-                else:
-                    names = names + 'None '
-            return names
+    def getName(self):
+        return self.name if self.name is not None else None
 
-    def getName(trains, number):
+    def getNameByNumber(trains, number):
         return trains[number].name if trains[number] is not None else None
 
     def getCargo(trains, number):

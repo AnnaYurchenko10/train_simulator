@@ -4,7 +4,8 @@ import numpy as numpy
 
 class Terminal(object):
 
-    def __init__(self, oil, production, is_free):
+    def __init__(self, name, oil, production, is_free):
+        self.name = name
         self.oil = oil
         self.production = production
         self.is_free = is_free
@@ -17,8 +18,8 @@ class Terminal(object):
                 terminal.is_free=True
                 train.status = Train_Status.TRANSIT_IN_ENTREPOT.value
                 train.location = Location_Status.IN_TRANSIT.value
+                train = None
     
     def production(terminal, loc, scale):
         terminal.production = round(numpy.random.normal(loc, scale, None))
         terminal.oil += terminal.production
-

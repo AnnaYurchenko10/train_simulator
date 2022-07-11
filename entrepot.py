@@ -41,12 +41,12 @@ class Entrepot(object):
                     if(train.cargo == 0):
                         train.status = Train_Status.TRANSIT_IN_TERMINAL.value
                         train.location = Location_Status.IN_TRANSIT.value
-                        train.speed += 5
+                        train.speed = train.speed * 1.25
                         entrepot.trains[index] = None
                 if (train.capacity != train.cargo) and (train.status == Train_Status.LOADING.value):
-                    if (train.cargo + train.loading > 10000):
-                        entrepot.oil = entrepot.oil - (10000 - train.cargo)
-                        train.cargo = train.cargo + (10000 - train.cargo)
+                    if (train.cargo + train.loading > train.capacity):
+                        entrepot.oil = entrepot.oil - (train.capacity - train.cargo)
+                        train.cargo = train.cargo + (train.capacity - train.cargo)
                     else:
                         train.cargo += train.loading
                         entrepot.oil -= train.loading
@@ -62,7 +62,7 @@ class Entrepot(object):
                 if train is not None:
                     if (train.status == Train_Status.LOADING.value):
                         isFirst = False
-                        if ((entrepot.oil - (train.capacity - train.cargo)) > 10000):
+                        if ((entrepot.oil - (train.capacity - train.cargo)) > train.capacity):
                             entrepot.trains.insert(free_place, Train(capacity=10000, cargo=0))
 
             if isFirst and free_place is not None:
