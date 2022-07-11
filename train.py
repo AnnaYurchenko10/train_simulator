@@ -1,5 +1,12 @@
+import json
+
 from location_status import Location_Status
 from train_status import Train_Status
+
+with open('DataConstants.json') as file_data_constants:
+    data_constants = json.load(file_data_constants)
+
+LOADING_SPEED_POLARNIY = data_constants['loading_speed_polarniy']
 
 class Train(object):
 
@@ -12,7 +19,7 @@ class Train(object):
         self.status = status
         self.location = location
         self.distance_traveled = distance_traveled
-        self.loading = 300
+        self.loading = LOADING_SPEED_POLARNIY
 
     def traffic(trains, queue_trains, terminal_name, terminal_point):
         for train in trains:

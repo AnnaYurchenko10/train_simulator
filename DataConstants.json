@@ -1,0 +1,15 @@
+{
+  "raduzniy_point": 2500,
+  "zvezda_point": 4000,
+  "expected_value_raduzniy": 150,
+  "standard_deviation_raduzniy": 10,
+  "expected_value_zvezda": 50,
+  "standard_deviation_zvezda": 2,
+  "speed_percentage_1": 0.8,
+  "speed_percentage_2": 1.25,
+  "loading_speed_raduzniy": 200,
+  "loading_speed_zvezda": 250,
+  "loading_speed_polarniy": 300,
+  "size_list_polarniy": 3,
+  "enterpot_capacity": 10000
+}
