@@ -1,6 +1,9 @@
 {
+    "name" : "polarniy",
     "oil": 0,
     "loading": 300,
     "unloading": 200,
-    "max_capacity": 15000
+    "max_capacity": 15000,
+    "loading_speed": 300,
+    "size_list": 3
 }

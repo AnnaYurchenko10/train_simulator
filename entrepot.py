@@ -8,17 +8,18 @@ with open('DataConstants.json') as file_data_constants:
     data_constants = json.load(file_data_constants)
 
 ENTERPOT_CAPACITY = data_constants['enterpot_capacity']
-SPEED_PERCENTAGE = data_constants['speed_percentage_2']
-SIZE_LIST_POLARNIY = data_constants['size_list_polarniy']
+SPEED_PERCENTAGE_LIGHT = data_constants['speed_percentage_light']
 
 class Entrepot(object):
 
-    def __init__(self, oil, loading, unloading, max_capacity):
+    def __init__(self, name, oil, loading, unloading, max_capacity, loading_speed, size_list):
+        self.name = name
         self.oil = oil
-        self.trains = [None] * SIZE_LIST_POLARNIY
+        self.trains = [None] * size_list
         self.loading = loading
         self.unloading = unloading
         self.max_capacity = max_capacity
+        self.loading_speed = loading_speed
     
     def unloading_queue_trains(queue_trains, trains):
         for train in trains:
@@ -50,7 +51,7 @@ class Entrepot(object):
                     if(train.cargo == 0):
                         train.status = Train_Status.TRANSIT_IN_TERMINAL.value
                         train.location = Location_Status.IN_TRANSIT.value
-                        train.speed = train.speed * SPEED_PERCENTAGE
+                        train.speed = train.speed * SPEED_PERCENTAGE_LIGHT
                         entrepot.trains[index] = None
                 if (train.capacity != train.cargo) and (train.status == Train_Status.LOADING.value):
                     if (train.cargo + train.loading > train.capacity):

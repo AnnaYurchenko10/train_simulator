@@ -13,26 +13,19 @@ from train_status import Train_Status
 with open('DataConstants.json') as file_data_constants:
     data_constants = json.load(file_data_constants)
 
-with open('DateTime.json') as file_date_time:
-    date_time = json.load(file_date_time)
+RADUZNIY_POINT = ''
+ZVEZDA_POINT = ''
 
-RADUZNIY_POINT = data_constants['raduzniy_point']
-ZVEZDA_POINT = data_constants['zvezda_point']
-EXPECTED_VALUE_RADUZNIY = data_constants['expected_value_raduzniy']
-STANDARD_DEVIATION_RADUZNIY = data_constants['standard_deviation_raduzniy']
-EXPECTED_VALUE_ZVEZDA = data_constants['expected_value_zvezda']
-STANDARD_DEVIATION_ZVEZDA = data_constants['standard_deviation_zvezda']
-SPEED_PERCENTAGE = data_constants['speed_percentage_1']
-LOADING_SPEED_RADUZNIY = data_constants['loading_speed_raduzniy']
-LOADING_SPEED_ZVEZDA = data_constants['loading_speed_zvezda']
+for route in data_constants['route']:
+    if route['point_from'] == 'raduzniy':
+        RADUZNIY_POINT = route['distance']
+    if route['point_from'] == 'zvezda':
+        ZVEZDA_POINT =route['distance']
 
-year = date_time['year']
-start_month = date_time['start_month']
-day = date_time['day']
-hour = date_time['hour']
-end_month = date_time['end_month']
-start_time = datetime.datetime(year, start_month, day, hour)
-end_time = datetime.datetime(year, end_month, day, hour)
+start_time = datetime.datetime.strptime(data_constants['date_start'], "%Y.%m.%d %H:%M:%S")
+end_time = datetime.datetime.strptime(data_constants['date_end'], "%Y.%m.%d %H:%M:%S")
+SPEED_PERCENTAGE_HARD = data_constants['speed_percentage_hard']
+
 
 def init():
 
@@ -57,8 +50,8 @@ def init():
         data_entrepot = json.load(file_data_entrepot)
     entrepot = Entrepot(**data_entrepot)
 
-def process(term, m, q, queue, trains, location_status, point):
-    Terminal.production(term, m, q)
+def process(term, queue, trains, location_status, point):
+    Terminal.production(term)
     # заполнение очереди из поездов, движение поездов
     Train.traffic(trains, queue, location_status, point)
 
@@ -70,17 +63,17 @@ for i in Arrow.range('hours', start_time, end_time):
     for term in terminal:
         if(term.name == 'raduzniy'):
             queue_raduzniy_trains = []
-            process(term, EXPECTED_VALUE_RADUZNIY, STANDARD_DEVIATION_RADUZNIY, queue_raduzniy_trains,raduzniy_trains, Location_Status.TERMINAL_R.value, RADUZNIY_POINT)
+            process(term, queue_raduzniy_trains,raduzniy_trains, Location_Status.TERMINAL_R.value, RADUZNIY_POINT)
             # проверка занятости пути
             if(term.is_free == True):
                 global raduzniy_train
                 if(len(queue_raduzniy_trains) > 0):
                     raduzniy_train = queue_raduzniy_trains.pop(0)
                     raduzniy_train.status = Train_Status.LOADING.value
-                    raduzniy_train.speed = raduzniy_train.speed * SPEED_PERCENTAGE
+                    raduzniy_train.speed = raduzniy_train.speed * SPEED_PERCENTAGE_HARD
                     term.is_free = False
             # погрузка нефти
-            Terminal.loading(raduzniy_train, LOADING_SPEED_RADUZNIY, term)
+            Terminal.loading(raduzniy_train, term.loading_speed, term)
             # вывод расписания в базу данных
             if (raduzniy_train.status == Train_Status.LOADING.value) or (
                     (raduzniy_train.cargo == raduzniy_train.capacity) and (raduzniy_train.distance_traveled == 0)
@@ -96,17 +89,17 @@ for i in Arrow.range('hours', start_time, end_time):
         if(term.name == 'zvezda'):
             # очередь из поездов
             queue_zvezda_trains = []
-            process(term, EXPECTED_VALUE_ZVEZDA, STANDARD_DEVIATION_ZVEZDA, queue_zvezda_trains, zvezda_trains, Location_Status.TERMINAL_Z.value, ZVEZDA_POINT)
+            process(term, queue_zvezda_trains, zvezda_trains, Location_Status.TERMINAL_Z.value, ZVEZDA_POINT)
             # проверка занятости пути
             if(term.is_free == True):
                 global zvezda_train
                 if(len(queue_zvezda_trains) > 0):
                     zvezda_train = queue_zvezda_trains.pop(0)
                     zvezda_train.status = Train_Status.LOADING.value
-                    zvezda_train.speed = zvezda_train.speed * SPEED_PERCENTAGE
+                    zvezda_train.speed = zvezda_train.speed * SPEED_PERCENTAGE_HARD
                     term.is_free = False
             # погрузка нефти
-            Terminal.loading(zvezda_train, LOADING_SPEED_ZVEZDA, term)
+            Terminal.loading(zvezda_train, term.loading_speed, term)
 
             # вывод расписания в базу данных
             if (zvezda_train.status == Train_Status.LOADING.value) or (
@@ -133,5 +126,4 @@ for i in Arrow.range('hours', start_time, end_time):
     )
 
     Entrepot.loading_unloading_process(entrepot)
-
     train_loading = Entrepot.loading_place(entrepot)

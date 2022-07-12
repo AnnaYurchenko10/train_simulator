@@ -3,10 +3,10 @@ import json
 from location_status import Location_Status
 from train_status import Train_Status
 
-with open('DataConstants.json') as file_data_constants:
-    data_constants = json.load(file_data_constants)
+with open('DataEntrepot.json') as file_data:
+    data = json.load(file_data)
 
-LOADING_SPEED_POLARNIY = data_constants['loading_speed_polarniy']
+LOADING_SPEED_POLARNIY = data['loading_speed']
 
 class Train(object):
 
