@@ -33,15 +33,16 @@ class Entrepot(object):
                 return index
             index += 1
 
-    def update_places(queue_trains, entrepot):
+    def update_places(queue_trains, entrepot, current_time):
         if len(queue_trains) > 0:
             free_place = Entrepot.has_free_place(entrepot.trains)
             if (entrepot.oil < ENTERPOT_CAPACITY) and (free_place is not None):
                 current_train = queue_trains.pop(0)
+                current_train.time_of_last_arrival = current_time
                 current_train.status = Train_Status.UNLOADING.value
                 entrepot.trains[free_place] = current_train
             
-    def loading_unloading_process(entrepot):
+    def loading_unloading_process(entrepot, current_time):
         index = 0
         for train in entrepot.trains:
             if train is not None:
@@ -49,6 +50,8 @@ class Entrepot(object):
                     entrepot.oil += entrepot.unloading
                     train.cargo -= entrepot.unloading
                     if(train.cargo == 0):
+                        train.time_of_last_departure = current_time
+                        Train.saveTrainHistoryRecord(train)
                         train.status = Train_Status.TRANSIT_IN_TERMINAL.value
                         train.location = Location_Status.IN_TRANSIT.value
                         train.speed = train.speed * SPEED_PERCENTAGE_LIGHT

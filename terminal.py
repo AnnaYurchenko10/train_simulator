@@ -1,4 +1,5 @@
 from location_status import Location_Status
+from train import Train
 from train_status import Train_Status
 import numpy as numpy
 
@@ -13,12 +14,14 @@ class Terminal(object):
         self.standard_deviation = standard_deviation
         self.loading_speed = loading_speed
 
-    def loading(train, oil, terminal):
+    def loading(train, oil, terminal, current_time):
         if (train.cargo < train.capacity) and (terminal.oil >= oil) and (train.status == Train_Status.LOADING.value):
             train.cargo += oil
             terminal.oil -= oil
             if(train.cargo == train.capacity):
                 terminal.is_free=True
+                train.time_of_last_departure = current_time
+                Train.saveTrainHistoryRecord(train)
                 train.status = Train_Status.TRANSIT_IN_ENTREPOT.value
                 train.location = Location_Status.IN_TRANSIT.value
                 train = None

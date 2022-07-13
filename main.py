@@ -53,13 +53,13 @@ def init():
 def process(term, queue, trains, location_status, point):
     Terminal.production(term)
     # заполнение очереди из поездов, движение поездов
-    Train.traffic(trains, queue, location_status, point)
+    Train.traffic(trains, queue, location_status, point, time)
 
 
 init()
 db_helper.init()
 
-for i in Arrow.range('hours', start_time, end_time):
+for time in Arrow.range('hours', start_time, end_time):
     for term in terminal:
         if(term.name == 'raduzniy'):
             queue_raduzniy_trains = []
@@ -73,18 +73,18 @@ for i in Arrow.range('hours', start_time, end_time):
                     raduzniy_train.speed = raduzniy_train.speed * SPEED_PERCENTAGE_HARD
                     term.is_free = False
             # погрузка нефти
-            Terminal.loading(raduzniy_train, term.loading_speed, term)
+            Terminal.loading(raduzniy_train, term.loading_speed, term, time)
             # вывод расписания в базу данных
             if (raduzniy_train.status == Train_Status.LOADING.value) or (
                     (raduzniy_train.cargo == raduzniy_train.capacity) and (raduzniy_train.distance_traveled == 0)
                     and (raduzniy_train.status != Train_Status.WAIT.value)
             ):
                 db_helper.insert_raduzniy_record(
-                    i.strftime('%Y-%m-%d %H:%M:%S'), term.oil, term.production, Train.getName(raduzniy_train),
+                    time.strftime('%Y-%m-%d %H:%M:%S'), term.oil, term.production, Train.getName(raduzniy_train),
                     raduzniy_train.cargo
                 )
             else:
-                db_helper.insert_raduzniy_record(i.strftime('%Y-%m-%d %H:%M:%S'), term.oil, term.production, None, 0)
+                db_helper.insert_raduzniy_record(time.strftime('%Y-%m-%d %H:%M:%S'), term.oil, term.production, None, 0)
 
         if(term.name == 'zvezda'):
             # очередь из поездов
@@ -99,7 +99,7 @@ for i in Arrow.range('hours', start_time, end_time):
                     zvezda_train.speed = zvezda_train.speed * SPEED_PERCENTAGE_HARD
                     term.is_free = False
             # погрузка нефти
-            Terminal.loading(zvezda_train, term.loading_speed, term)
+            Terminal.loading(zvezda_train, term.loading_speed, term, time)
 
             # вывод расписания в базу данных
             if (zvezda_train.status == Train_Status.LOADING.value) or (
@@ -107,23 +107,23 @@ for i in Arrow.range('hours', start_time, end_time):
                     and (zvezda_train.status != Train_Status.WAIT.value)
             ):
                 db_helper.insert_zvezda_record(
-                    i.strftime('%Y-%m-%d %H:%M:%S'), term.oil, term.production, Train.getName(zvezda_train),
+                    time.strftime('%Y-%m-%d %H:%M:%S'), term.oil, term.production, Train.getName(zvezda_train),
                     zvezda_train.cargo
                 )
             else:
-                db_helper.insert_zvezda_record(i.strftime('%Y-%m-%d %H:%M:%S'), term.oil, term.production, None, 0)
+                db_helper.insert_zvezda_record(time.strftime('%Y-%m-%d %H:%M:%S'), term.oil, term.production, None, 0)
 
         # очередь из поездов
     queue_polarniy_trains = []
     Entrepot.unloading_queue_trains(queue_polarniy_trains, trains)
-    Entrepot.update_places(queue_polarniy_trains, entrepot)
+    Entrepot.update_places(queue_polarniy_trains, entrepot, time)
 
     db_helper.insert_polarniy_record(
-        i.strftime('%Y-%m-%d %H:%M:%S'), entrepot.oil,
+        time.strftime('%Y-%m-%d %H:%M:%S'), entrepot.oil,
         Train.getNameByNumber(entrepot.trains, 0), Train.getCargo(entrepot.trains, 0),
         Train.getNameByNumber(entrepot.trains, 1), Train.getCargo(entrepot.trains, 1),
         Train.getNameByNumber(entrepot.trains, 2), Train.getCargo(entrepot.trains, 2)
     )
 
-    Entrepot.loading_unloading_process(entrepot)
+    Entrepot.loading_unloading_process(entrepot, time)
     train_loading = Entrepot.loading_place(entrepot)

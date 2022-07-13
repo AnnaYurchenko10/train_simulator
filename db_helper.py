@@ -42,10 +42,24 @@ def init():
         train_3 varchar(100),
         cargo_3 int
     );
+    CREATE TABLE IF NOT EXISTS train_history( 
+        train varchar(100),
+        arrival_time timestamp,
+        point varchar(100),
+        departure_time timestamp
+    );
     DELETE FROM raduzniy;
     DELETE FROM zvezda;
-    DELETE FROM polarniy;''')
+    DELETE FROM polarniy;
+    DELETE FROM train_history;
+    ''')
 
+    connection.commit()
+
+def insert_train_history_record(train, arrival_time, point, departure_time):
+    cursor.execute('''
+        INSERT INTO train_history (train, arrival_time, point, departure_time) VALUES
+        ('{}', '{}', '{}', '{}')'''.format(train, arrival_time, point, departure_time))
     connection.commit()
 
 def insert_raduzniy_record(date_and_time, oil, production, train, cargo):
